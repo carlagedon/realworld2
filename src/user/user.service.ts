@@ -5,8 +5,10 @@ import { JWT_SECREET } from 'src/config';
 import { Repository } from 'typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { LoginUserDto } from './dto/user-login.dto';
 import UserEntity from './entities/user.entity';
 import { userResponseInterface } from './types/userResponse.interface';
+import { compare } from 'bcrypt';
 
 @Injectable()
 export class UserService {
@@ -14,7 +16,7 @@ export class UserService {
   @InjectRepository(UserEntity)
   private readonly userRepository: Repository<UserEntity>
   ) {}
-  async create(createUserDto: CreateUserDto) {
+  async create(createUserDto: CreateUserDto): Promise<UserEntity> {
     const userByEmail = await this.userRepository.findOne({
       email: createUserDto.email,
     });
@@ -30,6 +32,45 @@ export class UserService {
     const newUser = new UserEntity();
     Object.assign(newUser, createUserDto);
     return this.userRepository.save(newUser);
+  }
+
+
+  async login(loginUserDto: LoginUserDto): Promise<UserEntity> {
+    const user = await this.userRepository.findOne(
+      {
+        email: loginUserDto.email,
+      },
+      { select: ['id', 'username', 'email', 'bio', 'img', 'password'] },
+      
+    );
+
+    console.log(user);
+    
+    
+
+    if (!user) {
+      throw new HttpException(
+        'Credentials are not valid',
+        HttpStatus.UNPROCESSABLE_ENTITY,
+      );
+    }
+
+    const isPasswordCorrect = await compare(
+      loginUserDto.password,
+      user.password,
+    );
+
+    if (!isPasswordCorrect) {
+      throw new HttpException(
+        'Credentials are not valid',
+        HttpStatus.UNPROCESSABLE_ENTITY,
+      );
+    }
+
+    
+
+    delete user.password;
+    return user;
   }
 
   genereteJwt(user: UserEntity): string {
@@ -50,6 +91,10 @@ export class UserService {
         token: this.genereteJwt(user)
       }
     }
+  }
+
+  findById(id : number): Promise<UserEntity>{
+    return this.userRepository.findOne(id)
   }
 
   findAll() {
