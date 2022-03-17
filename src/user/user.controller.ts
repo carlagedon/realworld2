@@ -1,10 +1,13 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UsePipes, ValidationPipe, Req, Request } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UsePipes, ValidationPipe, Req, Request, UseGuards } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { userResponseInterface } from './types/userResponse.interface';
 import { LoginUserDto } from './dto/user-login.dto';
 import { ExpressRequestInterface } from 'src/types/expressRequest.interface';
+import { User } from './decoraters/user.decorater';
+import UserEntity from './entities/user.entity';
+import { AuthGuard } from './guards/auth.guard';
 
 
 @Controller('user')
@@ -32,9 +35,11 @@ export class UserController {
   }
 
   @Get()
-  async currentUser(@Req() request: ExpressRequestInterface): Promise<userResponseInterface> {    
-    console.log(request.user)
-    return this.userService.buildUserResponse(request.user)
+  @UseGuards(AuthGuard)
+  async currentUser(@User() user: UserEntity,
+  @User('id') currentUserId: number): Promise<userResponseInterface> {    
+    console.log('userID', currentUserId)
+    return this.userService.buildUserResponse(user)
   }
 
   @Get()
@@ -57,3 +62,7 @@ export class UserController {
     return this.userService.remove(+id);
   }
 }
+function currentUser(arg0: string, currentUser: any) {
+  throw new Error('Function not implemented.');
+}
+
