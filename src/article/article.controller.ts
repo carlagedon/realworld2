@@ -7,12 +7,14 @@ import { CreateArticleDto } from './dto/createArticle.dto';
 
 @Controller('article')
 export class ArticleController {
-    constructor(private readonly articleService: ArticleService) {}
+  constructor(private readonly articleService: ArticleService) {}
 
-    @Post()
-    @UseGuards(AuthGuard)
-    async create(@User() currentUser: UserEntity, 
-    @Body() createArticleDto: CreateArticleDto): Promise<any> {
-        return this.articleService.createArticle(currentUser, createArticleDto)
-    }
+  @Post()
+  @UseGuards(AuthGuard)
+  async create(
+    @User() currentUser: UserEntity,
+    @Body() createArticleDto: CreateArticleDto,
+  ): Promise<any> {
+    return this.articleService.createArticle(currentUser, createArticleDto);
+  }
 }

@@ -1,32 +1,38 @@
-import { hash } from "bcrypt";
-import { ArticleEntity } from "src/article/entity/article.entity";
-import { BeforeInsert, Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { hash } from 'bcrypt';
+import { ArticleEntity } from 'src/article/entity/article.entity';
+import {
+  BeforeInsert,
+  Column,
+  Entity,
+  OneToMany,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 
-@Entity({name: 'Users'})
+@Entity({ name: 'Users' })
 export default class UserEntity {
-    @PrimaryGeneratedColumn()
-    id: number;
+  @PrimaryGeneratedColumn()
+  id: number;
 
-    @Column()
-    email: string;
-    
-    @Column()
-    username: string
+  @Column()
+  email: string;
 
-    @Column({default: ''})
-    bio: string;
+  @Column()
+  username: string;
 
-    @Column({default: ''})
-    img: string;
+  @Column({ default: '' })
+  bio: string;
 
-    @Column()
-    password: string;
+  @Column({ default: '' })
+  img: string;
 
-    @BeforeInsert()
-    async hashPassword() {
-        this.password = await hash(this.password, 10)
-    }
+  @Column()
+  password: string;
 
-    @OneToMany(() => ArticleEntity, article => article.author)
-    articles: ArticleEntity[]
+  @BeforeInsert()
+  async hashPassword() {
+    this.password = await hash(this.password, 10);
+  }
+
+  @OneToMany(() => ArticleEntity, (article) => article.author)
+  articles: ArticleEntity[];
 }

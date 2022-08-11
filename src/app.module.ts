@@ -9,7 +9,12 @@ import { UserModule } from './user/user.module';
 import { ArticleModule } from './article/article.module';
 
 @Module({
-  imports: [TypeOrmModule.forRoot(config) ,TagModule, UserModule, ArticleModule],
+  imports: [
+    TypeOrmModule.forRoot(config),
+    TagModule,
+    UserModule,
+    ArticleModule,
+  ],
   controllers: [AppController],
   providers: [AppService],
 })
@@ -17,8 +22,7 @@ export class AppModule {
   configure(consumer: MiddlewareConsumer) {
     consumer.apply(AuthMiddleware).forRoutes({
       path: '*',
-      method: RequestMethod.ALL
-    })
+      method: RequestMethod.ALL,
+    });
   }
 }
- 
