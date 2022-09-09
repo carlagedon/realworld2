@@ -1,4 +1,5 @@
 import { Body, Controller, Post, UseGuards } from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger';
 import { User } from 'src/user/decoraters/user.decorater';
 import UserEntity from 'src/user/entities/user.entity';
 import { AuthGuard } from 'src/user/guards/auth.guard';
@@ -9,6 +10,7 @@ import { CreateArticleDto } from './dto/createArticle.dto';
 export class ArticleController {
   constructor(private readonly articleService: ArticleService) {}
 
+  @ApiTags('Article')
   @Post()
   @UseGuards(AuthGuard)
   async create(
