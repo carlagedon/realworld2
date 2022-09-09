@@ -13,8 +13,8 @@ import { compare } from 'bcrypt';
 @Injectable()
 export class UserService {
   constructor(
-  @InjectRepository(UserEntity)
-  private readonly userRepository: Repository<UserEntity>
+    @InjectRepository(UserEntity)
+    private readonly userRepository: Repository<UserEntity>,
   ) {}
   async create(createUserDto: CreateUserDto): Promise<UserEntity> {
     const userByEmail = await this.userRepository.findOne({
@@ -34,19 +34,15 @@ export class UserService {
     return this.userRepository.save(newUser);
   }
 
-
   async login(loginUserDto: LoginUserDto): Promise<UserEntity> {
     const user = await this.userRepository.findOne(
       {
         email: loginUserDto.email,
       },
       { select: ['id', 'username', 'email', 'bio', 'img', 'password'] },
-      
     );
 
     console.log(user);
-    
-    
 
     if (!user) {
       throw new HttpException(
@@ -67,39 +63,40 @@ export class UserService {
       );
     }
 
-    
-
     delete user.password;
     return user;
   }
 
   genereteJwt(user: UserEntity): string {
-    return sign({
-      id: user.id,
-      username: user.username,
-      email: user.email,
-
-    },
-    JWT_SECREET);
+    return sign(
+      {
+        id: user.id,
+        username: user.username,
+        email: user.email,
+      },
+      JWT_SECREET,
+    );
   }
-
 
   buildUserResponse(user: UserEntity): userResponseInterface {
     return {
       user: {
         ...user,
-        token: this.genereteJwt(user)
-      }
-    }
+        token: this.genereteJwt(user),
+      },
+    };
   }
 
-  findById(id : number): Promise<UserEntity>{
-    return this.userRepository.findOne(id)
+  findById(id: number): Promise<UserEntity> {
+    return this.userRepository.findOne(id);
   }
 
-  async updateUser(userID: number, updateUserDto: UpdateUserDto): Promise<UserEntity> {
-    const user = await this.findById(userID)
-    Object.assign(user, updateUserDto)
-    return await this.userRepository.save(user)
+  async updateUser(
+    userID: number,
+    updateUserDto: UpdateUserDto,
+  ): Promise<UserEntity> {
+    const user = await this.findById(userID);
+    Object.assign(user, updateUserDto);
+    return await this.userRepository.save(user);
   }
 }
