@@ -16,7 +16,9 @@ import { LoginUserDto } from './dto/user-login.dto';
 import { User } from './decoraters/user.decorater';
 import UserEntity from './entities/user.entity';
 import { AuthGuard } from './guards/auth.guard';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
+@ApiTags('User')
 @Controller('user')
 export class UserController {
   constructor(private readonly userService: UserService) {}
@@ -40,6 +42,7 @@ export class UserController {
     return this.userService.buildUserResponse(user);
   }
 
+  @ApiBearerAuth()
   @Get()
   @UseGuards(AuthGuard)
   async currentUser(
@@ -51,18 +54,16 @@ export class UserController {
   }
 
   @Put()
+  @ApiBearerAuth()
   @UseGuards(AuthGuard)
-  async updateCurentUser(
-    @User('id') currentUserID: number,
-    @Body('user') updateUserDto: UpdateUserDto,
+  async updateCurrentUser(
+    @User('id') currentUserId: number,
+    @Body() updateUserDto: UpdateUserDto,
   ): Promise<userResponseInterface> {
     const user = await this.userService.updateUser(
-      currentUserID,
+      currentUserId,
       updateUserDto,
     );
     return this.userService.buildUserResponse(user);
   }
-}
-function currentUser(arg0: string, currentUser: any) {
-  throw new Error('Function not implemented.');
 }

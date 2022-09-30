@@ -1,5 +1,5 @@
 import { Body, Controller, Post, UseGuards } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { User } from 'src/user/decoraters/user.decorater';
 import UserEntity from 'src/user/entities/user.entity';
 import { AuthGuard } from 'src/user/guards/auth.guard';
@@ -12,6 +12,7 @@ export class ArticleController {
 
   @ApiTags('Article')
   @Post()
+  @ApiBearerAuth()
   @UseGuards(AuthGuard)
   async create(
     @User() currentUser: UserEntity,
