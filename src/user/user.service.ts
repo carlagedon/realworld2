@@ -92,10 +92,10 @@ export class UserService {
   }
 
   async updateUser(
-    userID: number,
+    userId: number,
     updateUserDto: UpdateUserDto,
   ): Promise<UserEntity> {
-    const user = await this.findById(userID);
+    const user = await this.findById(userId);
     Object.assign(user, updateUserDto);
     return await this.userRepository.save(user);
   }

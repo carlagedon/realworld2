@@ -19,7 +19,7 @@ export class ArticleEntity {
   title: string;
 
   @Column()
-  descriptiom: string;
+  description: string;
 
   @Column()
   body: string;
