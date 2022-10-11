@@ -7,9 +7,9 @@ import {
   Param,
   Delete,
   Put,
+  Query,
   UsePipes,
   ValidationPipe,
-  Query,
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { User } from 'src/user/decoraters/user.decorater';
@@ -109,5 +109,15 @@ export class ArticleController {
       currentUserId,
     );
     return this.articleService.buildArticleResponse(article);
+  }
+
+  @Get('feed')
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard)
+  async getFeed(
+    @User('id') currentUserId: number,
+    @Query() query: any,
+  ): Promise<ArticlesResponseInterface> {
+    return await this.articleService.getFeed(currentUserId, query);
   }
 }
